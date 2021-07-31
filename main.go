@@ -18,7 +18,11 @@ var sqlLogFileName string
 var sqlLogFile *os.File
 
 func init() {
-	sqlLogFileName = "/tmp/sql.log"
+	sqlLogFileName = os.Getenv("SQL_LOGFILE")
+	if sqlLogFileName == "" {
+		sqlLogFileName = "/tmp/sql.log"
+	}
+
 	log.Printf("Go SQL Logger: Log File -> %s\n", sqlLogFileName)
 	var err error
 	if sqlLogFile, err = os.OpenFile(sqlLogFileName, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644); err != nil {
