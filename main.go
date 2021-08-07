@@ -1,38 +1,23 @@
-package sqllogger
+package go_sql_logger
 
 import (
 	"context"
 	"database/sql"
 	"database/sql/driver"
-	"fmt"
 	"log"
-	"os"
 	"regexp"
 	"strings"
 	"time"
 
+	"github.com/hirosuzuki/go-sql-logger/logger"
 	proxy "github.com/shogo82148/go-sql-proxy"
 )
 
-var sqlLogFileName string
-var sqlLogFile *os.File
-
 func init() {
-	sqlLogFileName = os.Getenv("SQL_LOGFILE")
-	if sqlLogFileName == "" {
-		sqlLogFileName = "/tmp/sql.log"
-	}
-
-	log.Printf("Go SQL Logger: Log File -> %s\n", sqlLogFileName)
-	var err error
-	if sqlLogFile, err = os.OpenFile(sqlLogFileName, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644); err != nil {
-		log.Printf("Go SQL Logger: Open File Error: %s\n", err.Error())
-		return
-	}
-	registerTraceDBDriver()
+	RegisterTraceDBDriver()
 }
 
-func registerTraceDBDriver() {
+func RegisterTraceDBDriver() {
 	regexCutSpace := regexp.MustCompile(`[ \r\n\t]{1,}`)
 	regexTagComment := regexp.MustCompile(`(/\* *(.*?) *\*/)`)
 
@@ -40,7 +25,7 @@ func registerTraceDBDriver() {
 		return time.Now().UnixNano(), nil
 	}
 	PostFunc := func(c context.Context, ctx interface{}, stmt *proxy.Stmt, args []driver.NamedValue, err error) error {
-		if sqlLogFile != nil && err != driver.ErrSkip {
+		if err != driver.ErrSkip {
 			now := time.Now()
 			startTime := ctx.(int64)
 			timeDelta := now.UnixNano() - startTime
@@ -51,7 +36,7 @@ func registerTraceDBDriver() {
 				tag = query[posList[4]:posList[5]]
 				query = query[:posList[1]]
 			}
-			fmt.Fprintf(sqlLogFile, "%d\t%d\t%s\t%s\n", startTime, timeDelta, tag, query)
+			logger.Log(startTime, timeDelta, tag, query)
 		}
 		return nil
 	}
