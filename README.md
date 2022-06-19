@@ -7,6 +7,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/hirosuzuki/go-sql-logger"
    	"github.com/hirosuzuki/go-sql-logger/measure"
+	"github.com/hirosuzuki/go-sql-logger/pprofiler"
 )
 ```
 
@@ -14,16 +15,7 @@ import (
 
 ```go
 func initializeHandler() {
-	go func() {
-		logfilename := os.Getenv("CPU_PROFILE_FILE")
-		if logfilename != "" {
-			logfile, _ := os.Create(logfilename)
-			defer logfile.Close()
-			pprof.StartCPUProfile(logfile)
-			defer pprof.StopCPUProfile()
-			time.Sleep(70 * time.Second)
-		}
-	}()
+	pprofiler.Start(70)
 }
 ```
 
@@ -35,12 +27,11 @@ sqlx.Open("mysql"+os.Getenv("MYSQL_DRIVER_POSTFIX"), dsn)
 
 ## Service Start Script
 
-```sh:start.sh
+```sh:env.sh
 #!/bin/sh
 export MYSQL_DRIVER_POSTFIX=:logger
 export SQL_LOGFILE=/tmp/sql.log
 export CPU_PROFILE_FILE=/tmp/cpu.pprof
-exec /home/isucon/isuumo/webapp/go/isuumo >/dev/null 2>/dev/null
 ```
 
 ## Nginx Config
