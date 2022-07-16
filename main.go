@@ -36,6 +36,9 @@ func RegisterTraceDBDriver() {
 				tag = query[posList[4]:posList[5]]
 				query = query[:posList[1]]
 			}
+			if len(query) > 1000 {
+				query = query[:1000]
+			}
 			logger.Log(startTime, timeDelta, tag, query)
 		}
 		return nil
