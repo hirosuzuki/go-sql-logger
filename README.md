@@ -50,3 +50,12 @@ access_log /var/log/nginx/access.log with_time;
 ```
 defer measure.Start("APIPaymentToken").Stop()
 ```
+
+## MySQL Slow Query
+
+```
+SET GLOBAL long_query_time = 0;
+SET GLOBAL slow_query_log = ON;
+SET GLOBAL slow_query_log_file = "/tmp/slow.log";
+```
+
