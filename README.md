@@ -5,7 +5,7 @@
 ```go
 import (
 	_ "github.com/go-sql-driver/mysql"
-	_ "github.com/hirosuzuki/go-sql-logger"
+	goSqlLogger "github.com/hirosuzuki/go-sql-logger"
    	"github.com/hirosuzuki/go-sql-logger/measure"
 	"github.com/hirosuzuki/go-sql-logger/pprofiler"
 )
@@ -22,6 +22,7 @@ func initializeHandler() {
 ## Open MySQL Connection using sqlx
 
 ```go
+goSqlLogger.RegisterTraceDBDriver()
 sqlx.Open("mysql"+os.Getenv("MYSQL_DRIVER_POSTFIX"), dsn)
 ```
 
