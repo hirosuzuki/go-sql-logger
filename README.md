@@ -2,6 +2,12 @@
 
 ## Import SQL Logger Module
 
+install
+
+```
+go get github.com/hirosuzuki/go-sql-logger
+```
+
 ```go
 import (
 	_ "github.com/go-sql-driver/mysql"
