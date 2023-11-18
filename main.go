@@ -14,7 +14,7 @@ import (
 )
 
 func init() {
-	RegisterTraceDBDriver()
+	// RegisterTraceDBDriver()
 }
 
 func RegisterTraceDBDriver() {
